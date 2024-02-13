@@ -1,6 +1,7 @@
 const Admin = require("../../model/Staff/Admin")
 const AsyncHandler = require("express-async-handler");
 const generateToken = require("../../utils/generateToken");
+const verifyToken = require("../../utils/verifyToken");
 
 // @desc Admin register
 // Route POST /api/admins/register
@@ -32,7 +33,9 @@ exports.loginAdminCtrl =AsyncHandler(async (req,res)=>{
         }
 
         if(user && (await user.verifyPassword(password))){  
-            req.userAuth = user;      
+            const token = generateToken(user._id);
+          
+            const verify = verifyToken(token);
             return res.json({data:generateToken(user._id)});
         }else{
             //console.log(user);  
@@ -63,6 +66,7 @@ exports.getAdminsCtrl = (req,res)=>{
 
 exports.getAdminCtrl = (req,res)=>{
     try{
+        console.log(req.userAuth);
         res.status(201).json({
             status:"success",
             data:"single admin"
