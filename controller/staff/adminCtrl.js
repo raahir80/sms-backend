@@ -1,56 +1,44 @@
 const Admin = require("../../model/Staff/Admin")
+const AsyncHandler = require("express-async-handler");
+const generateToken = require("../../utils/generateToken");
 
 // @desc Admin register
 // Route POST /api/admins/register
 // @access private
-exports.registerAdmCtrl=async(req,res)=>{
-    const {name,email,password} =req.body
-    try{
+exports.registerAdmCtrl= AsyncHandler(async(req,res)=>{
+    const {name,email,password} =req.body;
         // Check if email exist
         const adminFound=await Admin.findOne({email});
         if(adminFound){
-            return res.json("Admin Exists");
+            throw new Error("Admin Exists");
         }    
         //register
         const user = Admin.create({
             name,email,password
         });
         return res.json({data:user});
-   }catch(error){
-        res.json({
-            status:"failed",
-            error:error.message,
-        })
-    }
-};
+});
 
 // @desc Admin login
 // Route POST /api/v1/admins/login
 // @access private
-exports.loginAdminCtrl =async (req,res)=>{
+exports.loginAdminCtrl =AsyncHandler(async (req,res)=>{
 
-    const {email,password} =req.body
-    try{
-        // find user
+    const {email,password} =req.body;
+           // find user
         const user = await Admin.findOne({email});
         if(!user){
             return res.json({message:'Invalid login credentials'})
         }
 
-        if(user && (await user.verifyPassword(password))){
-            
-            return res.json({data:user});
+        if(user && (await user.verifyPassword(password))){  
+            req.userAuth = user;      
+            return res.json({data:generateToken(user._id)});
         }else{
-            console.log(user);  
+            //console.log(user);  
             return res.json({message:"Invalid login credentials"});
         }
-    }catch(error){
-        res.json({
-            status:"failed",
-            error:error.message,
-        })
-    }
-};
+});
 
 // @desc get all admins
 // Route GET /api/v1/admins
