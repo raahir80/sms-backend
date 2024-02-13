@@ -13,7 +13,7 @@ exports.registerAdmCtrl= AsyncHandler(async(req,res)=>{
             throw new Error("Admin Exists");
         }    
         //register
-        const user = Admin.create({
+        const user = await Admin.create({
             name,email,password
         });
         return res.json({data:user});

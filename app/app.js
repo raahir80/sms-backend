@@ -7,6 +7,7 @@ const app = express();
 
 // Middlewares
 app.use(morgan("dev"));
+app.use(express.urlencoded({extended: true}))
 app.use(express.json()); // pass incoming json data
 // app.use((req,res,next)=>{
 //     console.log(`${req.method} ${req.originalUrl}`);
@@ -39,10 +40,10 @@ app.use(express.json()); // pass incoming json data
  
 //app.use(isLogin,isAdmin);
 // parse application/json
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+// // parse application/x-www-form-urlencoded
+// app.use(bodyParser.urlencoded({ extended: false }))
 
 //admin register
 app.use("/api/v1/admins",adminRouter);
