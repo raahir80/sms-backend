@@ -5,8 +5,9 @@ const isLogin  = async (req,res,next) => {
     // get token from header
 
     const headerObj = req.headers;
-    const token = headerObj.authorization.split(" ")[1];
-        // verify token
+    //const token = headerObj.authorization.split(" ")[1];
+    const token = headerObj && headerObj.authorization && headerObj.authorization.split(" ")[1];
+        // verify token 
 
     const verifiedToken = verifyToken(token)
     if(verifiedToken){

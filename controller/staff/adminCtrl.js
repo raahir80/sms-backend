@@ -2,6 +2,9 @@ const Admin = require("../../model/Staff/Admin")
 const AsyncHandler = require("express-async-handler");
 const generateToken = require("../../utils/generateToken");
 const verifyToken = require("../../utils/verifyToken");
+const bcrypt = require("bcryptjs");
+const { hashPassword, isPassMatched } = require("../../utils/helpers");
+
 
 // @desc Admin register
 // Route POST /api/admins/register
@@ -13,9 +16,11 @@ exports.registerAdmCtrl= AsyncHandler(async(req,res)=>{
         if(adminFound){
             throw new Error("Admin Exists");
         }    
+
+        
         //register
         const user = await Admin.create({
-            name,email,password
+            name,email,password:await hashPassword(password)
         });
         return res.json({data:user});
 });
@@ -32,69 +37,96 @@ exports.loginAdminCtrl =AsyncHandler(async (req,res)=>{
             return res.json({message:'Invalid login credentials'})
         }
 
-        if(user && (await user.verifyPassword(password))){  
-            const token = generateToken(user._id);
-          
-            const verify = verifyToken(token);
-            return res.json({data:generateToken(user._id)});
-        }else{
-            //console.log(user);  
-            return res.json({message:"Invalid login credentials"});
-        }
+        // verify password
+       const isMatched = await isPassMatched(password,user.password);
+       
+       if(!isMatched){
+        return res.json({message:"Invalid login credentials"});
+       }else{
+        return res.json({
+            data:generateToken(user._id),
+            message: "Admin logged in successfully"
+        })
+       }
+
 });
 
 // @desc get all admins
 // Route GET /api/v1/admins
 // @access private
-exports.getAdminsCtrl = (req,res)=>{
-    try{
-        res.status(201).json({
-            status:"success",
-            data:"All admins"
-        })
-    }catch(error){
-        res.json({
-            status:"failed",
-            error:error.message,
-        })
-    }
-};
+exports.getAdminsCtrl = AsyncHandler(async(req,res)=>{
+    const admins = await Admin.find();
+    res.status(200).json({
+        status:"success",
+        message:"Admin fetched Successfully",
+        data:admins
+    })
+});
 
 // @desc get single admin:
 // Route GET /api/v1/admins/:id
 // @access private
 
-exports.getAdminCtrl = (req,res)=>{
-    try{
-        console.log(req.userAuth);
-        res.status(201).json({
-            status:"success",
-            data:"single admin"
-        })
-    }catch(error){
-        res.json({
-            status:"failed",
-            error:error.message,
+exports.getAdminCtrl = AsyncHandler(async (req,res)=>{
+    console.log(req.userAuth);
+    const admin = await Admin.findById(req.userAuth._id).select("-password -createdAt -updatedAt");
+    if(!admin){
+        throw new Error('Admin not found')
+    }else{
+        res.status(200).json({
+            status:"Success",
+            data:admin,
+            message:"Admin profile fetched successfully"
         })
     }
-};
+});
 
 // @desc update admin
 // Route PUT /api/v1/admins/:id
 // @access private
-exports.updateAdminCtrl = (req,res)=>{
-    try{
-        res.status(201).json({
-            status:"success",
-            data:"update admin"
-        })
-    }catch(error){
-        res.json({
-            status:"failed",
-            error:error.message,
-        })
-    }
-};
+exports.updateAdminCtrl = AsyncHandler(async (req,res)=>{
+   const {email,name,password} = req.body;
+   // if email is taken
+   const emailExist = await Admin.findOne({email})
+
+   if(emailExist){
+    throw new Error('This email is taken/exist');
+   }
+
+   // check if user is updating password
+   if(password){
+    const admin = await Admin.findByIdAndUpdate(req.userAuth._id,{
+        email,name,password : await hashPassword(password) 
+    },{
+        new:true,
+        runValidators:true
+    });
+    res.status(200).json({
+        status:"success",
+        data:admin,
+        message:"Admin updated successfully"
+    });
+   
+
+   }else{
+    //update
+    const admin = await Admin.findByIdAndUpdate(req.userAuth._id,{
+        email,name
+    },{
+        new:true,
+        runValidators:true
+    });
+    res.status(200).json({
+        status:"success",
+        data:admin,
+        message:"Admin updated successfully"
+    });
+   
+   }
+
+   // update
+    
+});
 
 // @desc delete admin
 // Route DELETE /api/v1/admins/:id
