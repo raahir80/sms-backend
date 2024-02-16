@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const bodyParser = require('body-parser')
 const adminRouter= require("../routes/staff/adminRoute");
 const {globalErrorHandler,notFoundErr} = require("../middlewares/globalErrorHandler");
+const academicYearRouter = require("../routes/academics/academicYear");
 const app = express();
 
 // Middlewares
@@ -47,6 +48,7 @@ app.use(express.json()); // pass incoming json data
 
 //admin register
 app.use("/api/v1/admins",adminRouter);
+app.use("/api/v1/academic-years",academicYearRouter);
 
 
 // Error middlewares
