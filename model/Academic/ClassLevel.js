@@ -18,19 +18,19 @@ const classLevelSchema = new mongoose.Schema(
         },
         students:[
             {
-                type:Schema.Types.ObjectId,
+                type:mongoose.Schema.Types.ObjectId,
                 ref:"Student"
             }
          ],
          subjects:[
             {
-                type:Schema.Types.ObjectId,
+                type:mongoose.Schema.Types.ObjectId,
                 ref:"Subject",
             },
          ],
          teachers:[
             {
-                type:Schema.Types.ObjectId,
+                type:mongoose.Schema.Types.ObjectId,
                 ref:"Teacher"
             },
          ],

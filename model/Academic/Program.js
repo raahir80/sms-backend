@@ -32,7 +32,7 @@ const ProgramSchema = new mongoose.Schema(
                 },
             },
         createdBy:{
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref:"Admin",
             required:true,
         },
@@ -41,19 +41,19 @@ const ProgramSchema = new mongoose.Schema(
 
         teachers:[
         {
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Teacher",
         },
     ],
         students:[
         {
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Student",
             default:[]
         },
     ],
         subjects:[{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Subject",
             default:[],
         },
