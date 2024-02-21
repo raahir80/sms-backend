@@ -25,7 +25,7 @@ const teacherSchema = new mongoose.Schema(
                 return(
                     "TEA" +
                     Math.floor(100 + Math.random() * 900) +
-                    Date.now().toString.slice(2,4) +
+                    Date.now().toString().slice(2,4) +
                     this.name   
                         .split(" ")
                         .map(name => name[0])
@@ -47,9 +47,9 @@ const teacherSchema = new mongoose.Schema(
             default:"teacher"
         },
         subject:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Subject",
-            required:true
+            //required:true
         },
         applicationStatus:{
             type:String,
@@ -57,35 +57,35 @@ const teacherSchema = new mongoose.Schema(
             default:"pending"
         },
         program:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Program",
-            required:true
+           // required:true
         },
         classLevel:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"ClassLevel",
-            required:true
+           // required:true
         },
         academicYear:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"AcademicYear",
-            required:true,
+          //  required:true,
         },
         examsCreated:[
             {
-                type:Schema.Types.ObjectId,
+                type:mongoose.Schema.Types.ObjectId,
                 ref:"Exam",
             },
         ],
         createdBy:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Admin",
-            required:true,
+          //  required:true,
         },
         academicTerm:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"AcademicTerm",
-            required:true
+          //  required:true
         },
     },
     {
