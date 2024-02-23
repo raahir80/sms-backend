@@ -11,12 +11,12 @@ const examSchema = mongoose.Schema(
             required:true
         },
         subject:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Subject",
             required:true
         },
         program:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Program",
             required:true
         },
@@ -26,12 +26,12 @@ const examSchema = mongoose.Schema(
             default:50
         },
         totalMark:{
-            type:Numnber,
+            type:Number,
             required:true,
             default:100
         },
         academicTerm:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"AcademicTerm",
             required:true
         },
@@ -42,7 +42,8 @@ const examSchema = mongoose.Schema(
         },
         examDate:{
             type:Date,
-            required:true
+            required:true,
+            default:new Date()
         },
         examTime:{
             type:String,
@@ -60,26 +61,26 @@ const examSchema = mongoose.Schema(
             enum:["pending","live"]
         },
         questions:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Question"
         },
         classLevel:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"ClassLevel",
             required:true
         },
         createdBy:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Teacher",
             required:true
         },
         academicTerm:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"AcademicTerm",
             required:true
         },
         academicYear:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"AcademicYear",
             required:true
         }
