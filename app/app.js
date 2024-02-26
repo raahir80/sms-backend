@@ -11,6 +11,7 @@ const subjectRouter = require("../routes/academics/subject");
 const yearGroupRouter = require("../routes/academics/yeargroup");
 const teacherRouter = require("../routes/staff/teachers");
 const examRouter = require("../routes/academics/exam");
+const studentRouter = require("../routes/staff/student");
 
 
 const app = express();
@@ -65,6 +66,8 @@ app.use("/api/v1/subjects",subjectRouter);
 app.use("/api/v1/year-groups",yearGroupRouter);
 app.use("/api/v1/teachers",teacherRouter);
 app.use("/api/v1/exams",examRouter);
+app.use("/api/v1/students",studentRouter);
+
 
 
 

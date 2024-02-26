@@ -38,7 +38,7 @@ const studentSchema = new mongoose.Schema(
         // Classes are from 1 to 6
         classLevels:[
             {
-                type:Schema.Types.ObjectId,
+                type:mongoose.Schema.Types.ObjectId,
                 ref:"ClassLevel",
                 required:true,
             },
@@ -47,13 +47,13 @@ const studentSchema = new mongoose.Schema(
         currentClassLevel:{
             type:String,
             default:function(){
-                return this.classLevels[this.classLevels.length-1];
+            return this.classLevels[this.classLevels.length-1];
             }
         },
         academicYear:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"AcademicYear",
-            required:true
+            //required:true
         },
         dateAdmitted:{
             type:Date,
@@ -62,15 +62,15 @@ const studentSchema = new mongoose.Schema(
 
         examResults:[
             {
-                type:Schema.Types.ObjectId,
+                type:mongoose.Schema.Types.ObjectId,
                 ref:"ExamResult"
             },
         ],
 
         program:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Program",
-            required:true
+            //required:true
         },
         isPromotedToLevel200:{
             type:Boolean,
