@@ -2,8 +2,6 @@ const AsyncHandler = require("express-async-handler");
 const Exam = require("../../model/Academic/Exam");
 const Teacher = require("../../model/Staff/Teacher");
 
-
-
 //@desc Create Exam
 //@route POST /api/v1/exams
 //@access private teachers only
@@ -16,7 +14,7 @@ exports.createExam = AsyncHandler(async (req, res) => {
     program,
     academicTerm,
     classLevel,
-    examStatus, 
+    examStatus,
     duration,
     examDate,
     examTime,
@@ -53,7 +51,7 @@ exports.createExam = AsyncHandler(async (req, res) => {
     examType,
     subject,
     program,
-    createdBy:req.userAuth?._id,
+    createdBy: req.userAuth?._id,
   });
 
   // push the exam into teacher
@@ -63,27 +61,31 @@ exports.createExam = AsyncHandler(async (req, res) => {
   await examCreated.save();
   await teacherFound.save();
   res.status(200).json({
-    status:"success",
-    message:"Exam created",
-    data:examCreated
-  })
+    status: "success",
+    message: "Exam created",
+    data: examCreated,
+  });
 });
 
 //@desc Get all exams
 //@route GET /api/v1/exams
-//@access private 
+//@access private
 
 exports.getExams = AsyncHandler(async (req, res) => {
-    const exams = await Exam.find();
-    res.status(201).json({
-      status: "success",
-      message: "Exams fetched successfully",
-      data: exams,
-    });
+  const exams = await Exam.find().populate({
+    path: "questions",
+    populate: {
+      path: "createdBy",
+    },
   });
+  res.status(201).json({
+    status: "success",
+    message: "Exams fetched successfully",
+    data: exams,
+  });
+});
 
-
-  //@desc get single exam
+//@desc get single exam
 //@route GEt /api/v1/exams/:id
 //@access private teacher Only
 exports.getExam = AsyncHandler(async (req, res) => {
@@ -95,57 +97,57 @@ exports.getExam = AsyncHandler(async (req, res) => {
   });
 });
 
-
 //@desc update exam
 //@route PUT /api/v1/exams/:id
 //@access private teacher only
 exports.updateExam = AsyncHandler(async (req, res) => {
-    const { name,
-        description,
-        subject,
-        program,
-        academicTerm,
-        classLevel,
-        examStatus, 
-        duration,
-        examDate,
-        examTime,
-        examType,
-        createdBy,
-        academicYear,
-    } = req.body;
-  
-    //check name exists
-  
-    const examFound = await Exam.findOne({ name });
-    if (examFound) {
-      throw new Error("Exam already exists");
+  const {
+    name,
+    description,
+    subject,
+    program,
+    academicTerm,
+    classLevel,
+    examStatus,
+    duration,
+    examDate,
+    examTime,
+    examType,
+    createdBy,
+    academicYear,
+  } = req.body;
+
+  //check name exists
+
+  const examFound = await Exam.findOne({ name });
+  if (examFound) {
+    throw new Error("Exam already exists");
+  }
+  const examUpdated = await Exam.findByIdAndUpdate(
+    req.params.id,
+    {
+      name,
+      description,
+      academicYear,
+      academicTerm,
+      classLevel,
+      createdBy,
+      duration,
+      examDate,
+      examStatus,
+      examTime,
+      examType,
+      subject,
+      program,
+      createdBy: req.userAuth?._id,
+    },
+    {
+      new: true,
     }
-    const examUpdated = await Exam.findByIdAndUpdate(
-      req.params.id,
-      {
-        name,
-        description,
-        academicYear,
-        academicTerm,
-        classLevel,
-        createdBy,
-        duration,
-        examDate,
-        examStatus,
-        examTime,
-        examType,
-        subject,
-        program,
-        createdBy:req.userAuth?._id,
-      },
-      {
-        new: true,
-      }
-    );
-    res.status(201).json({
-      status: "success",
-      message: "Exam updated successfully",
-      data: examUpdated,
-    });
+  );
+  res.status(201).json({
+    status: "success",
+    message: "Exam updated successfully",
+    data: examUpdated,
   });
+});
