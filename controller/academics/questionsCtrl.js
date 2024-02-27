@@ -37,7 +37,7 @@ exports.createQuestions = AsyncHandler(async (req, res) => {
   //add the question into exam
   examFound.questions.push(questionCreated?._id);
 
-
+  await examFound.save(); 
   //save
   res.status(200).json({
     status:"success",

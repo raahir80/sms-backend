@@ -2,6 +2,8 @@ const AsyncHandler = require("express-async-handler");
 const { hashPassword, isPassMatched } = require("../../utils/helpers");
 const generateToken = require("../../utils/generateToken");
 const Student = require("../../model/Academic/Student");
+const Exam = require("../../model/Academic/Exam");
+const ExamResult = require("../../model/Academic/ExamResults");
 
 // @desc student register
 // Route POST /api/students/admin/register
@@ -167,31 +169,158 @@ exports.adminUpdateStudent = AsyncHandler(async (req, res) => {
   if (!studentFound) {
     throw new Error("Student not found");
   }
-  
+
   // update
-  const studentUpdated = await Student.findByIdAndUpdate(req.params.studentID, 
+  const studentUpdated = await Student.findByIdAndUpdate(
+    req.params.studentID,
     {
-        $set: {
+      $set: {
         name,
         email,
         academicYear,
         program,
         perfectName,
-        },
-        $addToSet: {
+      },
+      $addToSet: {
         classLevels,
-        },
+      },
     },
     {
-        new:true,
+      new: true,
     }
   );
 
   //send response
-    res.status(200).json({
-        status:"success",
-        data:studentUpdated,
-        message:"Student updated Successfully"
+  res.status(200).json({
+    status: "success",
+    data: studentUpdated,
+    message: "Student updated Successfully",
+  });
+});
 
-    })
+//@desc Student taking exam
+//@route POST /api//v1/students/exams/:examID/write
+//@access Private student only
+
+exports.writeExam = AsyncHandler(async (req, res) => {
+  //get student
+  const studentFound = await Student.findById(req.userAuth?._id);
+  if (!studentFound) {
+    throw new Error("Student not found");
+  }
+
+  //Get exam
+  const examFound = await Exam.findById(req.params.examID).populate(
+    "questions"
+  );
+  if (!examFound) {
+    throw new Error("Exam not found");
+  }
+
+  //get Questions
+  const questions = examFound?.questions;
+
+  //get students questions
+  const studentAnswers = req.body.answers;
+
+  //check if student answered all questions
+  if (studentAnswers.length !== questions.length) {
+    throw new Error("You have not answered all the questions");
+  }
+
+  //check if stduent has already takesn the exam
+  const studentFoundResults = await ExamResult.findOne({student:studentFound?._id});
+  if(studentFoundResults){
+    throw new Error("You have already given exam")
+  }
+
+
+  //Build report object
+  let correctAnswers = 0;
+  let wrongAnswers = 0;
+  let status='';
+  let totalQuestions = 0;
+  let grade = 0;
+  let remarks ='';
+  let score = 0;
+  let answeredQuestions = [];
+
+  
+  //check for answers
+  for (let i = 0; i < questions.length; i++) {
+    //find the question
+    const question = questions[i];
+    //check if the answer is correct
+    if (question.correctAnswer === studentAnswers[i]) {
+      correctAnswers++;
+      score++;
+      question.isCorrect = true;
+    } else {
+      wrongAnswers++;
+    }
+  }
+
+  //calculate reports
+  totalQuestions = questions.length;
+  grade = (correctAnswers / totalQuestions) * 100;
+  answeredQuestions = questions.map((question) => {
+    return {
+      question: question.question,
+      correctanswer: question.correctAnswer,
+      isCorrect: question.isCorrect,
+    };
+  });
+
+
+  //calculate status
+  if(grade >= 50){
+    status ="Pass"
+  }else{
+    status="Fail"
+  }
+
+  //Remarks
+  if(grade >= 80){
+    remarks = "Excellent"
+  }else if(grade >= 70){
+    remarks = "Very good"
+  }else if(grade >= 50){
+    remarks ="Fair"
+  }else{
+    remarks = "Poor"
+  }
+
+
+
+  //Generate Exam Results
+  const examResults =await ExamResult.create({
+    student:studentFound?._id,
+    exam:examFound?._id,
+    grade,
+    score,
+    status,remarks,
+    classLevel:examFound?.classLevel,
+    academicTerm:examFound?.academicTerm,
+    academicYear:examFound?.academicYear
+  });
+
+  // push results into students
+  studentFound.examResults.push(examResults?._id)
+
+  //save
+  await studentFound.save();
+
+  res.status(200).json({
+    status: "success",
+    correctAnswers,
+    wrongAnswers,
+    score,
+    grade,
+    remarks,
+    answeredQuestions,
+    totalQuestions,
+    status,
+    examResults
+    
+  });
 });

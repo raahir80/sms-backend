@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const examResultSchema = new mongoose.Schema(
     {
         student:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Student",
             required:true
         },
         exam:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Exam",
             required:true
         },
@@ -29,33 +29,33 @@ const examResultSchema = new mongoose.Schema(
         status:{
             type:String,
             required:true,
-            default:"failed",
-            enum:["failed","passed"]
+            default:"Fail",
+            enum:["Fail","Pass"]
         },
         remarks:{
             type:String,
             required:true,
-            enum:["Excellent","Good","poor"],
+            enum:["Excellent","Good","Poor"],
             default:"Poor"
         },
-        position:{
-            type:Number,
-            required:true
-        },
+        // position:{
+        //     type:Number,
+        //     required:true
+        // },
         subject:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Subject"
         },
         classLevel:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"ClassLevel"        },
         academicTerm:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"AcademicTerm",
             required:true
         },
         academicYear:{
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"AcademicYear",
             required:true
         },
