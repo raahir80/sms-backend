@@ -14,7 +14,7 @@ classLevelRouter
 // academicYearRouter.get('/',isLogin,isAdmin,getAcademicYears);
 
 classLevelRouter
-  .route("/")
+  .route("/:id")
   .get(isLogin, isAdmin, getClassLevel)
   .put(isLogin, isAdmin, updateClassLevel)
   .delete(isLogin, isAdmin, deleteClassLevel);

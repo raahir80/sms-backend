@@ -20,7 +20,7 @@ academicYearRouter
 // academicYearRouter.get('/',isLogin,isAdmin,getAcademicYears);
 
 academicYearRouter
-  .route("/")
+  .route("/:id")
   .get(isLogin, isAdmin, getAcademicYear)
   .put(isLogin, isAdmin, updateAcademicYear)
   .delete(isLogin, isAdmin, deleteAcademicYear);

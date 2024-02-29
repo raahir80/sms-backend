@@ -309,7 +309,6 @@ exports.writeExam = AsyncHandler(async (req, res) => {
 
   //save
   await studentFound.save();
-
   res.status(200).json({
     status: "success",
     correctAnswers,

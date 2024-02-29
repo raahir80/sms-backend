@@ -38,12 +38,9 @@ const studentSchema = new mongoose.Schema(
         // Classes are from 1 to 6
         classLevels:[
             {
-                type:mongoose.Schema.Types.ObjectId,
-                ref:"ClassLevel",
-                required:true,
+                type:String,
             },
         ],
-
         currentClassLevel:{
             type:String,
             default:function(){
